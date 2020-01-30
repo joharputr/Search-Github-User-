@@ -8,13 +8,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
 object NetworkConfig {
     fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(getOkHttpClient()) //retrofit butuh client
+            .client(getOkHttpClient())
             .build()
     }
 
@@ -24,14 +23,12 @@ object NetworkConfig {
             .readTimeout(timeOut, TimeUnit.SECONDS)
             .connectTimeout(timeOut, TimeUnit.SECONDS)
             .writeTimeout(timeOut, TimeUnit.SECONDS)
-            .addInterceptor(getInterseptor())  //client butuh interseptor
+            .addInterceptor(getInterseptor())
             .build()
     }
 
-
     fun getInterseptor(): Interceptor {
         return HttpLoggingInterceptor().apply {
-            //pake run eror why?
             level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
             } else {

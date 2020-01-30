@@ -12,16 +12,13 @@ import com.example.cermati.Adapter.UserSearchAdapter
 import com.example.cermati.Network.Model.ItemsItem
 import com.example.cermati.Presenter.Presenter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.properties.Delegates
-
 
 class MainActivity : AppCompatActivity(), com.example.cermati.View.View {
     private val list = mutableListOf<ItemsItem>()
     val searchAdapter = UserSearchAdapter(list)
     lateinit var queryString: String
-    private var totalPage by Delegates.notNull<Int>()
     var page = 0
-    var isLoading = false
+
     var presenter = Presenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +31,7 @@ class MainActivity : AppCompatActivity(), com.example.cermati.View.View {
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 queryString = query.toString()
-                Log.d("Tes", "QueryTextSubmit = " + queryString)
+                Log.d("TestQuery", "QueryTextSubmit = " + queryString)
                 list.clear()
                 page = 1
                 getPage()
@@ -43,8 +40,6 @@ class MainActivity : AppCompatActivity(), com.example.cermati.View.View {
 
             override fun onQueryTextChange(query: String?): Boolean {
                 queryString = query.toString()
-                Log.d("Tes", "QueryTextChange = " + queryString)
-
                 return false
             }
 
@@ -58,13 +53,12 @@ class MainActivity : AppCompatActivity(), com.example.cermati.View.View {
                 val lastVisiblePosition =
                     linearLayoutManager.findLastCompletelyVisibleItemPosition()
                 val isLastPosition = countItem.minus(1) == lastVisiblePosition
-                Log.d("cekData", "countItem: $countItem")
-                Log.d("cekData", "lastVisiblePosition: $lastVisiblePosition")
-                Log.d("cekData", "isLastPosition: $isLastPosition isLoading = $isLoading")
-                if (!isLoading && isLastPosition) {
-                    //   showLoading(true)
+                Log.d("checkData", "countItem: $countItem")
+                Log.d("checkData", "lastVisiblePosition: $lastVisiblePosition")
+                Log.d("checkData", "isLastPosition: $isLastPosition")
+                if (isLastPosition) {
                     page++
-                    Log.d("cekPageKe = ", page.toString())
+                    Log.d("cekPage = ", page.toString())
                     getPage()
                 }
             }
@@ -78,11 +72,8 @@ class MainActivity : AppCompatActivity(), com.example.cermati.View.View {
         }
     }
 
-
     fun getPage() {
-        isLoading = true
         presenter.getUsers(queryString, page)
-        isLoading = false
     }
 
     override fun showProgress(show: Boolean) {
@@ -93,13 +84,11 @@ class MainActivity : AppCompatActivity(), com.example.cermati.View.View {
     }
 
     override fun onError(error: String) {
-        Toast.makeText(this,error,Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
     }
 
     override fun showUsers(result: List<ItemsItem>) {
         list.addAll(result)
         searchAdapter.notifyDataSetChanged()
     }
-
-
 }

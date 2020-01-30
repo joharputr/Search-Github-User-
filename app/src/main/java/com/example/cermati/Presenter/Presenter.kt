@@ -25,16 +25,19 @@ class Presenter(private val view: View) {
                 val body: Response? = response.body()
 
                 if (body != null) {
-                    body.items.let {result->
-                        view.showUsers(result!!)
+                    body.items.let { result ->
+                        result?.let { view.showUsers(it) }
+                        if (response.body()?.totalCount == 0) {
+                            view.onError("Data Not Found")
+                        }
                     }
                 } else {
                     view.onError(response.message())
                 }
+
             }
         })
     }
-
 
 
 }
